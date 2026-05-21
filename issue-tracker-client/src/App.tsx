@@ -102,7 +102,7 @@ function App() {
           <div className="flex items-center space-x-4">
             <button
               onClick={handleCreateOpen}
-              className="inline-flex items-center space-x-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-violet-500/10 transition-all hover:from-violet-700 hover:to-indigo-700 hover:-translate-y-0.5 active:translate-y-0"
+              className="inline-flex items-center space-x-1.5 sm:space-x-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-3 py-2.5 sm:px-4 text-sm font-semibold text-white shadow-md shadow-violet-500/10 transition-all hover:from-violet-700 hover:to-indigo-700 hover:-translate-y-0.5 active:translate-y-0"
             >
               <svg
                 className="h-4.5 w-4.5"
@@ -117,7 +117,7 @@ function App() {
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              <span>New Issue</span>
+              <span className="hidden sm:inline">New Issue</span>
             </button>
           </div>
         </div>
@@ -138,22 +138,22 @@ function App() {
             </div>
             
             {/* Quick Metrics */}
-            <div className="flex gap-4 self-start md:self-auto flex-wrap">
-              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[90px] dark:border-slate-800/60 dark:bg-slate-900/60">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full md:w-auto">
+              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[80px] sm:min-w-[95px] dark:border-slate-800/60 dark:bg-slate-900/60">
                 <span className="block text-2xl font-black text-violet-600 dark:text-violet-400">{totalIssues}</span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total</span>
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Total</span>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[90px] dark:border-slate-800/60 dark:bg-slate-900/60">
+              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[80px] sm:min-w-[95px] dark:border-slate-800/60 dark:bg-slate-900/60">
                 <span className="block text-2xl font-black text-sky-500">{openCount}</span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Open</span>
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Open</span>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[90px] dark:border-slate-800/60 dark:bg-slate-900/60">
+              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[80px] sm:min-w-[95px] dark:border-slate-800/60 dark:bg-slate-900/60">
                 <span className="block text-2xl font-black text-indigo-500">{inProgressCount}</span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Progress</span>
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Progress</span>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[90px] dark:border-slate-800/60 dark:bg-slate-900/60">
+              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[80px] sm:min-w-[95px] dark:border-slate-800/60 dark:bg-slate-900/60">
                 <span className="block text-2xl font-black text-emerald-500">{resolvedCount}</span>
-                <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Resolved</span>
+                <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Resolved</span>
               </div>
             </div>
           </div>
@@ -190,13 +190,13 @@ function App() {
             </div>
 
             {/* Select Dropdowns */}
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:flex lg:flex-wrap items-center gap-3 w-full lg:w-auto">
               {/* Status Filter */}
-              <div className="relative">
+              <div className="relative w-full lg:w-auto">
                 <select
                   value={filters.status}
                   onChange={(e) => setFilter('status', e.target.value)}
-                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-4 pr-10 py-2.5 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none dark:border-slate-800 dark:bg-slate-900"
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-4 pr-10 py-2.5 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none dark:border-slate-800 dark:bg-slate-900 focus:ring-4 focus:ring-violet-500/10"
                 >
                   <option value="">All Statuses</option>
                   <option value="open">Open</option>
@@ -212,11 +212,11 @@ function App() {
               </div>
 
               {/* Severity Filter */}
-              <div className="relative">
+              <div className="relative w-full lg:w-auto">
                 <select
                   value={filters.severity}
                   onChange={(e) => setFilter('severity', e.target.value)}
-                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-4 pr-10 py-2.5 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none dark:border-slate-800 dark:bg-slate-900"
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-4 pr-10 py-2.5 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none dark:border-slate-800 dark:bg-slate-900 focus:ring-4 focus:ring-violet-500/10"
                 >
                   <option value="">All Severities</option>
                   <option value="low">Low</option>
@@ -232,11 +232,11 @@ function App() {
               </div>
 
               {/* Priority Filter */}
-              <div className="relative">
+              <div className="relative w-full lg:w-auto">
                 <select
                   value={filters.priority}
                   onChange={(e) => setFilter('priority', e.target.value)}
-                  className="appearance-none rounded-xl border border-slate-200 bg-white pl-4 pr-10 py-2.5 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none dark:border-slate-800 dark:bg-slate-900"
+                  className="w-full appearance-none rounded-xl border border-slate-200 bg-white pl-4 pr-10 py-2.5 text-sm font-medium transition-all focus:border-violet-500 focus:outline-none dark:border-slate-800 dark:bg-slate-900 focus:ring-4 focus:ring-violet-500/10"
                 >
                   <option value="">All Priorities</option>
                   <option value="low">Low</option>
@@ -255,7 +255,7 @@ function App() {
               {(filters.status || filters.severity || filters.priority || filters.search) && (
                 <button
                   onClick={resetFilters}
-                  className="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors"
+                  className="rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors w-full sm:w-auto text-center col-span-full lg:w-auto"
                 >
                   Clear Filters
                 </button>
