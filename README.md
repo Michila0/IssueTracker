@@ -14,3 +14,6 @@
 - Debounced search + filter + pagination
 - Status/priority badges + dashboard counts
 - CSV/JSON export
+![alt text](image.png)
+
+![alt text](image-1.png)
