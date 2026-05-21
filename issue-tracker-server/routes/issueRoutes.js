@@ -6,16 +6,17 @@ import {
   updateIssue,
   deleteIssue,
 } from '../controllers/issueController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.route('/')
-  .post(createIssue)
-  .get(getIssues);
+  .post(protect, createIssue)
+  .get(protect, getIssues);
 
 router.route('/:id')
-  .get(getIssueById)
-  .put(updateIssue)
-  .delete(deleteIssue);
+  .get(protect, getIssueById)
+  .put(protect, updateIssue)
+  .delete(protect, deleteIssue);
 
 export default router;

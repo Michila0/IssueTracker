@@ -8,6 +8,7 @@ export interface Issue {
   severity: 'low' | 'medium' | 'high' | 'critical';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   status: 'open' | 'in-progress' | 'resolved' | 'closed';
+  user?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -33,6 +34,7 @@ interface IssueState {
   deleteIssue: (id: string) => Promise<void>;
   setFilter: (key: keyof Filters, value: string) => void;
   resetFilters: () => void;
+  resetStore: () => void;
 }
 
 const initialFilters: Filters = {
@@ -143,5 +145,17 @@ export const useIssueStore = create<IssueState>((set, get) => ({
   resetFilters: () => {
     set({ filters: initialFilters });
     get().fetchIssues(1);
+  },
+
+  resetStore: () => {
+    set({
+      issues: [],
+      totalIssues: 0,
+      totalPages: 1,
+      currentPage: 1,
+      loading: false,
+      error: null,
+      filters: initialFilters,
+    });
   },
 }));

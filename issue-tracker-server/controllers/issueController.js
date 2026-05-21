@@ -1,5 +1,7 @@
 import Issue from '../models/Issue.js';
 
+const assertIssueOwnership = (issue, userId) => issue.user?.toString() === userId.toString();
+
 // @desc    Create a new issue
 // @route   POST /api/issues
 // @access  Public
@@ -17,6 +19,7 @@ export const createIssue = async (req, res) => {
       severity,
       priority,
       status,
+      user: req.user._id,
     });
 
     res.status(201).json(issue);
@@ -32,7 +35,7 @@ export const getIssues = async (req, res) => {
   try {
     const { status, priority, severity, search, page = 1, limit = 10 } = req.query;
 
-    const query = {};
+    const query = { user: req.user._id };
 
     // Apply filtering
     if (status) query.status = status;
@@ -82,6 +85,10 @@ export const getIssueById = async (req, res) => {
       return res.status(404).json({ message: 'Issue not found' });
     }
 
+    if (!assertIssueOwnership(issue, req.user._id)) {
+      return res.status(403).json({ message: 'Not authorized to access this issue' });
+    }
+
     res.status(200).json(issue);
   } catch (error) {
     if (error.kind === 'ObjectId') {
@@ -102,6 +109,10 @@ export const updateIssue = async (req, res) => {
 
     if (!issue) {
       return res.status(404).json({ message: 'Issue not found' });
+    }
+
+    if (!assertIssueOwnership(issue, req.user._id)) {
+      return res.status(403).json({ message: 'Not authorized to update this issue' });
     }
 
     issue = await Issue.findByIdAndUpdate(
@@ -128,6 +139,10 @@ export const deleteIssue = async (req, res) => {
 
     if (!issue) {
       return res.status(404).json({ message: 'Issue not found' });
+    }
+
+    if (!assertIssueOwnership(issue, req.user._id)) {
+      return res.status(403).json({ message: 'Not authorized to delete this issue' });
     }
 
     await issue.deleteOne();

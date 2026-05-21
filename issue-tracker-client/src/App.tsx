@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useIssueStore } from './store/useIssueStore';
 import type { Issue } from './store/useIssueStore';
+import { useAuthStore } from './store/useAuthStore';
+import { AuthPage } from './components/AuthPage';
 import { IssueCard } from './components/IssueCard';
 import { IssueForm } from './components/IssueForm';
 
 function App() {
+  const { user, initialized, initAuth, logout } = useAuthStore();
   const {
     issues,
     totalIssues,
@@ -17,16 +20,25 @@ function App() {
     deleteIssue,
     setFilter,
     resetFilters,
+    resetStore,
   } = useIssueStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Fetch issues on load and when page changes
   useEffect(() => {
-    fetchIssues(1);
-  }, []);
+    initAuth();
+  }, [initAuth]);
+
+  useEffect(() => {
+    if (user) {
+      fetchIssues(1);
+      return;
+    }
+
+    resetStore();
+  }, [user, fetchIssues, resetStore]);
 
   // Debounced search input handler
   useEffect(() => {
@@ -40,6 +52,14 @@ function App() {
   const handleCreateOpen = () => {
     setEditingIssue(null);
     setIsModalOpen(true);
+  };
+
+  const handleLogout = () => {
+    logout();
+    resetStore();
+    setIsModalOpen(false);
+    setEditingIssue(null);
+    setSearchTerm('');
   };
 
   const handleEditOpen = (issue: Issue) => {
@@ -68,18 +88,33 @@ function App() {
   const inProgressCount = issues.filter((i) => i.status === 'in-progress').length;
   const resolvedCount = issues.filter((i) => i.status === 'resolved' || i.status === 'closed').length;
 
+  if (!initialized) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
+        <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/8 px-5 py-4 backdrop-blur-xl">
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+          Loading workspace...
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <AuthPage />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
       
       {/* Visual background ambient details */}
       <div className="absolute top-0 left-1/4 -z-10 h-96 w-96 rounded-full bg-violet-400/10 blur-3xl dark:bg-violet-900/10" />
-      <div className="absolute top-1/3 right-1/4 -z-10 h-[400px] w-[400px] rounded-full bg-sky-400/10 blur-3xl dark:bg-sky-900/10" />
+      <div className="absolute top-1/3 right-1/4 -z-10 h-100 w-100 rounded-full bg-sky-400/10 blur-3xl dark:bg-sky-900/10" />
 
       {/* Navigation Header */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-100 bg-white/70 backdrop-blur-md dark:border-slate-800/80 dark:bg-slate-950/70">
         <div className="mx-auto flex max-w-7xl h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
           <div className="flex items-center space-x-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-600 shadow-md shadow-violet-500/20">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-tr from-violet-600 to-indigo-600 shadow-md shadow-violet-500/20">
               <svg
                 className="h-5 w-5 text-white"
                 fill="none"
@@ -94,15 +129,29 @@ function App() {
                 />
               </svg>
             </div>
-            <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-indigo-400">
+            <span className="text-xl font-extrabold tracking-tight bg-linear-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent dark:from-violet-400 dark:to-indigo-400">
               IssueTracker
             </span>
           </div>
 
           <div className="flex items-center space-x-4">
+            <div className="hidden sm:flex flex-col items-end leading-tight">
+              <span className="text-xs uppercase tracking-[0.22em] text-slate-400 dark:text-slate-500">
+                Welcome
+              </span>
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+                {user.name}
+              </span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-rose-200 hover:text-rose-600 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-rose-900/60 dark:hover:text-rose-300"
+            >
+              Logout
+            </button>
             <button
               onClick={handleCreateOpen}
-              className="inline-flex items-center space-x-1.5 sm:space-x-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-3 py-2.5 sm:px-4 text-sm font-semibold text-white shadow-md shadow-violet-500/10 transition-all hover:from-violet-700 hover:to-indigo-700 hover:-translate-y-0.5 active:translate-y-0"
+              className="inline-flex items-center space-x-1.5 sm:space-x-2 rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 px-3 py-2.5 sm:px-4 text-sm font-semibold text-white shadow-md shadow-violet-500/10 transition-all hover:from-violet-700 hover:to-indigo-700 hover:-translate-y-0.5 active:translate-y-0"
             >
               <svg
                 className="h-4.5 w-4.5"
@@ -139,19 +188,19 @@ function App() {
             
             {/* Quick Metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 w-full md:w-auto">
-              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[80px] sm:min-w-[95px] dark:border-slate-800/60 dark:bg-slate-900/60">
+              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-20 sm:min-w-24 dark:border-slate-800/60 dark:bg-slate-900/60">
                 <span className="block text-2xl font-black text-violet-600 dark:text-violet-400">{totalIssues}</span>
                 <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Total</span>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[80px] sm:min-w-[95px] dark:border-slate-800/60 dark:bg-slate-900/60">
+              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-20 sm:min-w-24 dark:border-slate-800/60 dark:bg-slate-900/60">
                 <span className="block text-2xl font-black text-sky-500">{openCount}</span>
                 <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Open</span>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[80px] sm:min-w-[95px] dark:border-slate-800/60 dark:bg-slate-900/60">
+              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-20 sm:min-w-24 dark:border-slate-800/60 dark:bg-slate-900/60">
                 <span className="block text-2xl font-black text-indigo-500">{inProgressCount}</span>
                 <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Progress</span>
               </div>
-              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-[80px] sm:min-w-[95px] dark:border-slate-800/60 dark:bg-slate-900/60">
+              <div className="rounded-2xl border border-slate-100 bg-white p-4 text-center shadow-sm min-w-20 sm:min-w-24 dark:border-slate-800/60 dark:bg-slate-900/60">
                 <span className="block text-2xl font-black text-emerald-500">{resolvedCount}</span>
                 <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Resolved</span>
               </div>

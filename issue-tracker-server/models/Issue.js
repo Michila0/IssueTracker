@@ -37,6 +37,11 @@ const issueSchema = new mongoose.Schema(
       },
       default: 'open',
     },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'User',
+    },
   },
   {
     timestamps: true,
