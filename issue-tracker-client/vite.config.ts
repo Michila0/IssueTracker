@@ -8,4 +8,5 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  base: process.env.VITE_API_URL === 'production' ? '/issue-tracker-client/' : '/',
 })
