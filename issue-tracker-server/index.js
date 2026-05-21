@@ -15,11 +15,17 @@ const app = express();
 
 // Standard Middlewares
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://issue-tracker-di71hbwtd-michilas-projects.vercel.app',
-    'https://issue-tracker-di71hbwtd-michilas-projects.vercel.app/'
-  ],
+  origin: function (origin, callback) {
+    const allowed = [
+      /\.vercel\.app$/,
+      /localhost/
+    ];
+    if (!origin || allowed.some(r => r.test(origin))) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
