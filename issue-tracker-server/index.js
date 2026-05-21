@@ -14,7 +14,16 @@ connectDB();
 const app = express();
 
 // Standard Middlewares
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://issue-tracker-di71hbwtd-michilas-projects.vercel.app',
+    'https://issue-tracker-di71hbwtd-michilas-projects.vercel.app/'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Routes
