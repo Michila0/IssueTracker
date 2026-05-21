@@ -19,7 +19,7 @@ interface AuthFormProps {
 }
 
 export const AuthForm: React.FC<AuthFormProps> = ({ mode, loading = false, error, onSubmit }) => {
-  const { register, handleSubmit, reset, formState } = useForm<AuthFormValues>({ defaultValues: { name: '', email: '', password: '' } });
+  const { register, handleSubmit, reset } = useForm<AuthFormValues>({ defaultValues: { name: '', email: '', password: '' } });
 
   React.useEffect(() => {
     reset({ name: '', email: '', password: '' });
